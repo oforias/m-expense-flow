@@ -1,0 +1,148 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Android heap dumps
+android/*.hprof
+*.hprof
+
+# Firebase & secrets — never commit these
+google-services.json
+GoogleService-Info.plist
+functions/.runtimeconfig.json
+functions/.env
+functions/.env.*
+*.env
+.firebaserc
+firebase.json
+lib/firebase_options.dart
+
+# Node modules — never commit these
+node_modules/
+functions/node_modules/
+
+# Capstone write-up and dev notes — not part of the codebase
+CAPSTONE_*.md
+APPENDIX_*.md
+AI_*.md
+ML_*.md
+GEMINI_*.md
+FIREBASE_*.md
+PREMIUM_*.md
+PAYMENT_*.md
+PAYSTACK_*.md
+PEER_COMPARISON_*.md
+PRODUCTION_*.md
+DEPLOYMENT_*.md
+ONBOARDING_*.md
+GAMIFICATION_*.md
+BUDGET_*.md
+FINANCIAL_*.md
+INTERCONNECTION_*.md
+MONITORING_*.md
+PERFORMANCE_*.md
+COMPILATION_*.md
+WORKFLOW_*.md
+FEATURE_FLAGS_*.md
+EDGE_CASE_*.md
+DIAGNOSTIC_*.md
+TROUBLESHOOTING_*.md
+VIVA_STUDY_GUIDE.md
+APP_STATUS_REPORT.md
+HONEST_APP_ASSESSMENT.md
+LOVABLE_BUILD_ASSESSMENT.md
+BUDGE_APP_COMPARISON.md
+CROSS_FEATURE_*.md
+PROPERTY_TEST_SUITE_REPORT.md
+PROJECT_TIMELINE_*.md
+UI_MODERNIZATION_*.md
+LOCAL_*.md
+SMART_ONBOARDING_*.md
+SSL_*.md
+SECTION_*.md
+TASK_*.md
+TASKS_*.md
+PHASE_*.md
+QUICK_*.md
+READY_*.md
+RESTART_*.md
+EMULATOR_*.md
+DO_THIS_NOW.md
+START_HERE.md
+RUN_TESTS.md
+CONCERNS_ADDRESSED.md
+EXPENSE_VALIDATION_UPDATE.md
+IMPORT_CONFLICT_FIXED.md
+MODEL_FIX_APPLIED.md
+FIX_*.md
+ALL_FIXES_COMPLETE.md
+CRITICAL_COMPILATION_ERRORS.md
+SUPPORTIVE_INSIGHTS_APPROACH.md
+MOCK_REPOSITORIES_IMPLEMENTATION.md
+FIRESTORE_SETUP_INSTRUCTIONS.md
+fix_firestore_permissions.md
+test_fixes.md
+functions/ISOLATION_FOREST_TEST_REPORT.md
+
+# Dev/debug scripts at root
+*.bat
+*.ps1
+*.dart
+check_budget_data.dart
+debug_*.dart
+demo_*.dart
+fix_*.dart
+focused_debug.dart
+initialize_*.dart
+manual_*.dart
+simple_test.dart
+test_*.dart
+train_ml_models.dart
+update_budget_date.dart
+users.json
+FIREBASE_LINKS.txt
+PAYMENT_SETUP_README.txt
+$null
+0)

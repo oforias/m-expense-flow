@@ -1,0 +1,2 @@
+# Repositories directory
+# Contains data access layer (UserRepository, ExpenseRepository, IncomeRepository, BudgetRepository, AIInsightsRepository)

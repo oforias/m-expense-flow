@@ -1,0 +1,2 @@
+# Providers directory
+# Contains state management providers (AuthProvider, ExpenseProvider, IncomeProvider, BudgetProvider, AIProvider, etc.)

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification channel definitions for M-Expense Flow -->
+    
+    <!-- Default channel -->
+    <string name="default_notification_channel_id">default</string>
+    <string name="default_notification_channel_name">General</string>
+    <string name="default_notification_channel_description">General notifications</string>
+    
+    <!-- Achievement notifications -->
+    <string name="achievements_notification_channel_id">achievements</string>
+    <string name="achievements_notification_channel_name">Achievements</string>
+    <string name="achievements_notification_channel_description">Achievement unlock notifications</string>
+    
+    <!-- Budget alert notifications -->
+    <string name="budget_alerts_notification_channel_id">budget_alerts</string>
+    <string name="budget_alerts_notification_channel_name">Budget Alerts</string>
+    <string name="budget_alerts_notification_channel_description">Budget warning and overspending alerts</string>
+    
+    <!-- Streak reminder notifications -->
+    <string name="streak_reminders_notification_channel_id">streak_reminders</string>
+    <string name="streak_reminders_notification_channel_name">Streak Reminders</string>
+    <string name="streak_reminders_notification_channel_description">Daily streak maintenance reminders</string>
+    
+    <!-- Challenge notifications -->
+    <string name="challenges_notification_channel_id">challenges</string>
+    <string name="challenges_notification_channel_name">Challenges</string>
+    <string name="challenges_notification_channel_description">Challenge completion notifications</string>
+    
+    <!-- Savings goal notifications -->
+    <string name="savings_goals_notification_channel_id">savings_goals</string>
+    <string name="savings_goals_notification_channel_name">Savings Goals</string>
+    <string name="savings_goals_notification_channel_description">Savings goal completion notifications</string>
+    
+    <!-- Overspending alert notifications -->
+    <string name="overspending_alerts_notification_channel_id">overspending_alerts</string>
+    <string name="overspending_alerts_notification_channel_name">Overspending Alerts</string>
+    <string name="overspending_alerts_notification_channel_description">Intelligent overspending detection alerts</string>
+</resources>

@@ -1,0 +1,70 @@
+{
+  "trained_at": "2026-02-08T17:22:49.284781",
+  "model_type": "general",
+  "categories": [
+    {
+      "category": "Trotro & Transport",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Trotro & Transport_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Trotro & Transport_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Groceries",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Groceries_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Groceries_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Data Bundles",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Data Bundles_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Data Bundles_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Academic Materials",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Academic Materials_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Academic Materials_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Parties & Clubs",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Parties & Clubs_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Parties & Clubs_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Entertainment",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Entertainment_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Entertainment_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Beauty & Grooming",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Beauty & Grooming_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Beauty & Grooming_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Fashion & Clothes",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Fashion & Clothes_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Fashion & Clothes_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    },
+    {
+      "category": "Situationship Spending",
+      "model_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Situationship Spending_model.pkl",
+      "scaler_path": "C:\\Users\\HP\\expense_flow\\functions\\src\\ml\\python\\models\\general\\Situationship Spending_scaler.pkl",
+      "training_samples": 500,
+      "anomaly_rate": 0.1
+    }
+  ],
+  "note": "These are general models for cold start. Replace with personalized models as users accumulate data."
+}
