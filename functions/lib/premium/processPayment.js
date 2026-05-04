@@ -1,11 +1,12 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyPayment = exports.paystackWebhook = exports.processPayment = void 0;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
 // Paystack configuration — reads from .env (PAYSTACK_SECRET_KEY)
-const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || 'placeholder';
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || ((_a = functions.config().paystack) === null || _a === void 0 ? void 0 : _a.secret_key) || 'placeholder';
 exports.processPayment = functions.https.onCall(async (data, context) => {
     // Verify authentication
     if (!context.auth) {
@@ -23,13 +24,13 @@ exports.processPayment = functions.https.onCall(async (data, context) => {
         if (!userDoc.exists) {
             throw new functions.https.HttpsError('not-found', 'User not found');
         }
-        // Validate payment amount
+        // Validate payment amount — accept both full and discounted prices
         const expectedAmounts = {
-            monthly: 19.00,
-            semester: 95.00,
-            yearly: 180.00 // GHS 180/year
+            monthly: [19.00, 12.35],
+            semester: [95.00, 61.75],
+            yearly: [180.00, 117.00],
         };
-        if (Math.abs(amount - expectedAmounts[planType]) > 0.01) {
+        if (!expectedAmounts[planType].some((expected) => Math.abs(amount - expected) <= 0.01)) {
             throw new functions.https.HttpsError('invalid-argument', 'Invalid payment amount');
         }
         // Generate unique reference

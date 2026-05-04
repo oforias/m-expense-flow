@@ -55,7 +55,15 @@ exports.detectAnomalyWithIsolationForest = functions.https.onCall(async (data, c
     const historyPoints = history.map(isolationForest_1.toDataPoint);
     const targetPoint = (0, isolationForest_1.toDataPoint)(transaction);
     // Run Isolation Forest
-    const result = (0, isolationForest_1.runIsolationForest)(targetPoint, historyPoints);
+    let result = (0, isolationForest_1.runIsolationForest)(targetPoint, historyPoints);
+    // Only flag overspending — if the transaction is BELOW the historical average,
+    // it's not an anomaly we care about (spending less is fine)
+    if (result.isAnomaly && history.length >= 7) {
+        const avgAmount = history.reduce((sum, t) => { var _a; return sum + ((_a = t.amount) !== null && _a !== void 0 ? _a : 0); }, 0) / history.length;
+        if (transaction.amount < avgAmount) {
+            result = Object.assign(Object.assign({}, result), { isAnomaly: false, severity: 'safe', message: 'Spending is below your usual amount — no alert needed' });
+        }
+    }
     // Persist detection log
     await admin.firestore()
         .collection('anomaly_detections')

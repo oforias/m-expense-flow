@@ -1,12 +1,16 @@
 /**
  * Isolation Forest — pure TypeScript implementation
  *
- * How it works:
- * - Build N random "isolation trees" by recursively splitting data on random
- *   feature/value pairs until each point is isolated.
- * - Anomalies are isolated in fewer splits (shorter path length).
- * - Average path length across all trees → anomaly score.
- * - Score close to 1 = anomaly, close to 0 = normal.
+ * Reference: Liu, Fei Tony, Kai Ming Ting, and Zhi-Hua Zhou.
+ * "Isolation forest." ICDM 2008.
+ *
+ * Key formula: score(x, n) = 2^( -E[h(x)] / c(n) )
+ *   where c(n) = 2*H(n-1) - 2*(n-1)/n  (average path length of BST on n nodes)
+ *   and   H(i) = ln(i) + 0.5772156649   (Euler–Mascheroni constant)
+ *
+ * IMPORTANT: c must always be computed with the SUBSAMPLE_SIZE (ψ), NOT the
+ * actual dataset size. Using the actual size when data < ψ inflates scores
+ * for normal points and causes false negatives.
  */
 
 interface DataPoint {
@@ -25,20 +29,15 @@ interface IsolationTreeNode {
   right?: IsolationTreeNode;
 }
 
-// All 4 features are needed for correct score calibration.
-// With only 1 feature, the algorithm degenerates into a sorted binary search
-// and normal points score ~0.6 instead of the expected ~0.5.
-// Multiple features with random splits produce the correct score distribution.
 const FEATURES: (keyof DataPoint)[] = ['amount', 'dayOfWeek', 'isWeekend', 'hour'];
 const NUM_TREES = 100;
 const SUBSAMPLE_SIZE = 256;
 
-// Expected average path length for a dataset of size n
-function averagePathLength(n: number): number {
+/** c(n): expected average path length of an unsuccessful BST search on n nodes */
+function c(n: number): number {
   if (n <= 1) return 0;
   if (n === 2) return 1;
-  // Harmonic number approximation
-  const H = Math.log(n - 1) + 0.5772156649;
+  const H = Math.log(n - 1) + 0.5772156649; // H(n-1) = ln(n-1) + γ
   return 2 * H - (2 * (n - 1)) / n;
 }
 
@@ -47,24 +46,10 @@ function buildTree(data: DataPoint[], depth: number, maxDepth: number): Isolatio
     return { isLeaf: true, size: data.length };
   }
 
-  // Variance-weighted feature selection:
-  // Features with more spread get selected more often.
-  // This ensures amount dominates when it's the discriminating feature,
-  // while still using all features to maintain correct score calibration.
-  const featureVariances = FEATURES.map(key => {
-    const vals = data.map(d => d[key] as number);
-    const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-    return Math.max(0.01, vals.reduce((s, v) => s + (v - mean) ** 2, 0) / vals.length);
-  });
-  const totalVariance = featureVariances.reduce((a, b) => a + b, 0);
-
-  let r = Math.random() * totalVariance;
-  let featureIdx = 0;
-  for (let i = 0; i < featureVariances.length; i++) {
-    r -= featureVariances[i];
-    if (r <= 0) { featureIdx = i; break; }
-  }
-
+  // Uniform random feature selection — as per the original paper.
+  // Variance-weighted selection biases the score distribution and causes
+  // normal points to score too high when one feature dominates.
+  const featureIdx = Math.floor(Math.random() * FEATURES.length);
   const featureKey = FEATURES[featureIdx];
   const values = data.map(d => d[featureKey] as number);
   const min = Math.min(...values);
@@ -94,12 +79,10 @@ function buildTree(data: DataPoint[], depth: number, maxDepth: number): Isolatio
 
 function pathLength(point: DataPoint, node: IsolationTreeNode, currentDepth: number): number {
   if (node.isLeaf) {
-    return currentDepth + averagePathLength(node.size);
+    return currentDepth + c(node.size);
   }
-
   const featureKey = FEATURES[node.featureIndex!];
   const val = point[featureKey] as number;
-
   if (val < node.splitValue!) {
     return pathLength(point, node.left!, currentDepth + 1);
   } else {
@@ -108,13 +91,13 @@ function pathLength(point: DataPoint, node: IsolationTreeNode, currentDepth: num
 }
 
 function subsample(data: DataPoint[], size: number): DataPoint[] {
-  if (data.length <= size) return data;
+  if (data.length <= size) return [...data];
   const shuffled = [...data].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, size);
 }
 
 export interface IsolationForestResult {
-  score: number;       // 0–1, higher = more anomalous
+  score: number;
   isAnomaly: boolean;
   severity: 'safe' | 'medium' | 'high';
   confidence: number;
@@ -124,7 +107,7 @@ export interface IsolationForestResult {
 export function runIsolationForest(
   point: DataPoint,
   historicalData: DataPoint[],
-  threshold = 0.70,
+  threshold = 0.62,
 ): IsolationForestResult {
   if (historicalData.length < 7) {
     return {
@@ -136,34 +119,37 @@ export function runIsolationForest(
     };
   }
 
-  // maxDepth and c must use SUBSAMPLE_SIZE as per the original paper
-  // This ensures the score formula is calibrated correctly regardless of dataset size
-  const psiSize = Math.min(SUBSAMPLE_SIZE, historicalData.length);
-  const maxDepth = Math.ceil(Math.log2(psiSize));
-  const trees: IsolationTreeNode[] = [];
+  // maxDepth is derived from SUBSAMPLE_SIZE (ψ), not actual data size.
+  const maxDepth = Math.ceil(Math.log2(SUBSAMPLE_SIZE));
 
+  // c(ψ) — the normalisation constant. MUST use SUBSAMPLE_SIZE, not data.length.
+  // Using data.length when data.length < ψ makes c smaller, inflating scores
+  // for normal points and producing false negatives.
+  const cPsi = c(SUBSAMPLE_SIZE);
+
+  const trees: IsolationTreeNode[] = [];
   for (let i = 0; i < NUM_TREES; i++) {
     const sample = subsample(historicalData, SUBSAMPLE_SIZE);
     trees.push(buildTree(sample, 0, maxDepth));
   }
 
-  // Standard Isolation Forest scoring: 2^(-avgPath/c)
-  // c(psi) is the expected average path length for a dataset of size psi
-  // A normal point scores ~0.5, an anomaly scores closer to 1.0
-  const avgPath = trees.reduce((sum, tree) => sum + pathLength(point, tree, 0), 0) / NUM_TREES;
-  const c = averagePathLength(psiSize);
-  const score = c === 0 ? 0 : Math.pow(2, -avgPath / c);
+  const avgPath =
+    trees.reduce((sum, tree) => sum + pathLength(point, tree, 0), 0) / NUM_TREES;
+
+  // score(x) = 2^( -E[h(x)] / c(ψ) )
+  // Normal points: avgPath ≈ c(ψ)  → score ≈ 0.5
+  // Anomalies:     avgPath << c(ψ) → score → 1.0
+  const score = cPsi === 0 ? 0 : Math.pow(2, -avgPath / cPsi);
 
   const isAnomaly = score >= threshold;
   let severity: 'safe' | 'medium' | 'high' = 'safe';
-  if (score >= 0.85) severity = 'high';
+  if (score >= 0.75) severity = 'high';
   else if (score >= threshold) severity = 'medium';
 
-  // Confidence scales with data size
   const confidence = Math.min(0.95, 0.5 + historicalData.length / 200);
 
   const message = isAnomaly
-    ? `Unusual transaction detected (anomaly score: ${score.toFixed(2)})`
+    ? `Unusual transaction detected (score: ${score.toFixed(3)})`
     : 'Transaction is within normal spending patterns';
 
   return { score, isAnomaly, severity, confidence, message };

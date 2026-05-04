@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import axios from 'axios';
 
 // Paystack configuration — reads from .env (PAYSTACK_SECRET_KEY)
-const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || 'placeholder';
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || functions.config().paystack?.secret_key || 'placeholder';
 
 
 interface PaymentData {
@@ -48,14 +48,14 @@ export const processPayment = functions.https.onCall(
         throw new functions.https.HttpsError('not-found', 'User not found');
       }
 
-      // Validate payment amount
-      const expectedAmounts = {
-        monthly: 19.00,    // GHS 19/month (35% student discount)
-        semester: 95.00,   // GHS 95/semester 
-        yearly: 180.00     // GHS 180/year
+      // Validate payment amount — accept both full and discounted prices
+      const expectedAmounts: Record<string, number[]> = {
+        monthly: [19.00, 12.35],
+        semester: [95.00, 61.75],
+        yearly: [180.00, 117.00],
       };
 
-      if (Math.abs(amount - expectedAmounts[planType]) > 0.01) {
+      if (!expectedAmounts[planType].some((expected: number) => Math.abs(amount - expected) <= 0.01)) {
         throw new functions.https.HttpsError('invalid-argument', 'Invalid payment amount');
       }
 

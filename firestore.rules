@@ -104,6 +104,24 @@ service cloud.firestore {
       match /streak_reminders/{document=**} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+
+      // Budget alert state (tracks last alert sent per budget)
+      match /budget_alert_state/{budgetId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Trial data
+      match /trials/{trialId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Notifications collection (top-level, written by app and Cloud Functions)
+    match /notifications/{notificationId} {
+      allow read, write: if request.auth != null && 
+                         resource.data.get('userId', '') == request.auth.uid;
+      allow create: if request.auth != null &&
+                    request.resource.data.get('userId', '') == request.auth.uid;
     }
     
     // Leaderboards are read-only for authenticated users
